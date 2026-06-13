@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DanHoot - Unirse a Partida</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="header-bar">
+    <a href="/" class="header-logo">Dan<span>Hoot</span></a>
+    <a href="/host.html" class="btn btn-secondary" style="width: auto; padding: 0.5rem 1.25rem; font-size: 0.9rem;">Crear Partida</a>
+  </header>
+
+  <main class="container">
+    <div class="glass-card text-center">
+      <h1 class="logo-text">Dan<span class="logo-accent">Hoot</span></h1>
+      <p class="subtitle">¡Ingresa el PIN de la sala y tu apodo para comenzar a jugar!</p>
+      
+      <!-- Error Notification Display -->
+      <div id="error-alert" class="hidden" style="background: rgba(220,38,38,0.2); border: 1.5px solid var(--color-red-light); color: var(--color-gray-light); padding: 1rem; border-radius: 16px; margin-bottom: 1.5rem; text-align: left; font-size: 0.95rem; font-weight: 500;">
+        <span id="error-message"></span>
+      </div>
+
+      <!-- Join Form -->
+      <form id="join-form">
+        <div class="form-group">
+          <label for="room-code">PIN de Juego</label>
+          <input 
+            type="text" 
+            id="room-code" 
+            placeholder="Ej. 123456" 
+            pattern="[0-9]{6}" 
+            maxlength="6" 
+            required
+            autocomplete="off"
+            style="text-align: center; font-size: 1.5rem; letter-spacing: 0.15em; font-weight: 700;"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="nickname">Apodo / Nickname</label>
+          <input 
+            type="text" 
+            id="nickname" 
+            placeholder="Ej. SuperGamer" 
+            maxlength="15" 
+            required
+            autocomplete="off"
+            style="text-align: center; font-weight: 600;"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4" style="font-size: 1.15rem; padding: 1.1rem 2rem;">
+          ¡Entrar a la Sala!
+        </button>
+      </form>
+      
+      <div class="mt-4" style="margin-top: 1.5rem;">
+        <button id="qr-scan-mock-btn" class="btn btn-secondary" style="font-size: 0.95rem; width: auto; padding: 0.6rem 1.5rem; border-radius: 50px;">
+          📷 Escanear Código QR
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Load script files -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+  <script>
+    const form = document.getElementById('join-form');
+    const roomCodeInput = document.getElementById('room-code');
+    const nicknameInput = document.getElementById('nickname');
+    const errorAlert = document.getElementById('error-alert');
+    const errorMessage = document.getElementById('error-message');
+    const qrScanBtn = document.getElementById('qr-scan-mock-btn');
+
+    // Auto-fill Room Code if passed in URL query param (?code=XXXXXX)
+    window.addEventListener('DOMContentLoaded', () => {
+      const codeFromUrl = getQueryParam('code');
+      if (codeFromUrl && codeFromUrl.match(/^\d{6}$/)) {
+        roomCodeInput.value = codeFromUrl;
+        nicknameInput.focus();
+      } else {
+        roomCodeInput.focus();
+      }
+    });
+
+    // Mock QR scan interaction for browsers that don't have camera permissions
+    qrScanBtn.addEventListener('click', () => {
+      // Create a nice prompt or tell the user how the URL load works
+      const promptCode = prompt("Ingresa el código detectado por tu cámara o escanea el QR directamente para que te redirija:");
+      if (promptCode && promptCode.match(/^\d{6}$/)) {
+        roomCodeInput.value = promptCode;
+        nicknameInput.focus();
+      } else if (promptCode) {
+        alert("Código PIN inválido. Debe ser de 6 dígitos.");
+      }
+    });
+
+    // Handle Form submission
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const roomCode = roomCodeInput.value.trim();
+      const nickname = nicknameInput.value.trim();
+
+      if (!roomCode.match(/^\d{6}$/)) {
+        showError("El PIN de juego debe ser de exactamente 6 números.");
+        return;
+      }
+
+      if (nickname.length === 0) {
+        showError("Por favor ingresa un apodo válido.");
+        return;
+      }
+
+      // Hide active errors
+      errorAlert.classList.add('hidden');
+
+      // Attempt to join via sockets
+      socket.emit('joinGame', { roomCode, nickname });
+    });
+
+    // Handle Socket confirmation
+    socket.on('joinSuccess', (data) => {
+      // Storing session data in sessionStorage to load in player.html
+      sessionStorage.setItem('danhoot_room', data.roomCode);
+      sessionStorage.setItem('danhoot_nick', data.nickname);
+      window.location.href = `/player.html`;
+    });
+
+    // Handle errors from server
+    socket.on('error', (data) => {
+      showError(data.message || "Ocurrió un error inesperado al intentar unirse.");
+    });
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorAlert.classList.remove('hidden');
+      errorAlert.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
