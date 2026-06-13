@@ -38,9 +38,8 @@ DanHoot/
 ├── package.json         # Dependencias del proyecto.
 ├── .gitignore           # Archivos omitidos en Git.
 └── public/              # Directorio de recursos estáticos del cliente.
-    ├── index.html       # Acceso y login de jugadores.
-    ├── host.html        # Dashboard administrativo del anfitrión.
-    ├── player.html      # Interfaz de respuesta interactiva del jugador.
+    ├── index.html       # Portal único del jugador (acceso, lobby, juego y feedback).
+    ├── host.html        # Dashboard administrativo del anfitrión (creador, lobby, estadísticas y podio).
     ├── style.css        # Hoja de estilos compartida (diseño, efectos y animaciones).
     └── script.js        # Utilidades compartidas del lado del cliente.
 ```
