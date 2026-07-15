@@ -1,26 +1,26 @@
-# DanHoot 🚀 - Clon Funcional de Kahoot en Tiempo Real
+# DanHoot - Clon Funcional de Kahoot en Tiempo Real
 
 DanHoot es una aplicación web interactiva en tiempo real para crear y jugar trivias en grupo, inspirada en Kahoot. Está construida usando **Node.js, Express y Socket.io** en el backend, y un frontend moderno con **HTML5, JavaScript Vanilla y CSS3**.
 
 ---
 
-## 🎨 Identidad Visual y Diseño Premium
+## Identidad Visual y Diseño Premium
 - **Paleta de Colores:** Basada en Azules profundos (`#0A1128`, `#1E3A8A`, `#3B82F6`), Rojos intensos (`#DC2626`, `#EF4444`) y Blancos/Grises (`#FFFFFF`, `#F3F4F6`).
 - **Estilo:** Bordes súper redondeados (`border-radius: 24px`), transparencias y desenfoques tipo cristal (Glassmorphism), sombras fluidas y tipografía moderna cargada desde Google Fonts (Inter y Montserrat).
 - **Responsividad:** Diseñada con flexbox y CSS Grid fluido para verse espectacular tanto en un proyector (pantalla del anfitrión) como en teléfonos móviles (controles del jugador).
 
 ---
 
-## ⚡ Funcionalidades Principales
+## Funcionalidades Principales
 
-### 👨‍🏫 Modo Anfitrión (Profesor / Creador)
+### Modo Anfitrión (Profesor / Creador)
 1. **Creador de Quizzes:** Formulario dinámico para ingresar el título y añadir múltiples preguntas. Permite editar el enunciado, las 4 opciones, seleccionar la correcta mediante un botón radial y definir el límite de tiempo (5-60s) usando un slider interactivo.
 2. **Lobby en Tiempo Real:** Al guardar la trivia, el servidor genera un código PIN único de 6 dígitos y un código QR que codifica el enlace directo de acceso. Los jugadores conectados se listan dinámicamente.
 3. **Control de la Partida:** Botón para iniciar el juego cuando haya participantes conectados.
 4. **Pantalla de Estadísticas:** Muestra en tiempo real cuántas respuestas se han recibido y, al finalizar el tiempo, revela la respuesta correcta junto con un gráfico de barras animado que muestra la distribución de respuestas.
 5. **Podio Final:** Renderiza un podio tridimensional interactivo para el Top 3 y una tabla con los puntajes generales de todos los participantes. Permite reiniciar la partida con el mismo código.
 
-### 📱 Modo Jugador
+### Modo Jugador
 1. **Acceso Ágil (QR):** Permite ingresar manualmente el PIN o cargar la URL con el parámetro `?code=XXXXXX` provisto por el QR, el cual auto-completa el PIN y enfoca el campo de apodo.
 2. **Control Remoto Táctil:** Presenta botones responsivos adaptados al tamaño de los dedos, cada uno con los colores institucionales y símbolos de Kahoot (Triángulo, Diamante, Círculo, Cuadrado).
 3. **Puntuación Inteligente por Velocidad:** Calcula los puntos en base al tiempo de reacción:
@@ -70,7 +70,7 @@ El flujo del juego se gestiona mediante eventos bidireccionales de Socket.io:
 
 ---
 
-## 🚀 Instalación y Ejecución
+## Instalación y Ejecución
 
 ### Requisitos Previos
 Tener instalado **Node.js** (versión 18 o superior recomendada).
@@ -95,7 +95,7 @@ El servidor arrancará por defecto en el puerto `3000` y mostrará el siguiente 
 
 ---
 
-## 📶 Jugando en una Red Local (Múltiples Dispositivos)
+## Jugando en una Red Local (Múltiples Dispositivos)
 
 Si deseas jugar con amigos o alumnos conectando sus teléfonos móviles reales en la misma red Wi-Fi:
 
