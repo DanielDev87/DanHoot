@@ -102,5 +102,5 @@ Si deseas jugar con amigos o alumnos conectando sus teléfonos móviles reales e
 1. Busca la IP local de tu ordenador (en macOS, puedes abrir la terminal y escribir `ifconfig | grep inet` o mirarlo en *Ajustes del Sistema > Red*). Ejemplo: `192.168.1.50`.
 2. En lugar de localhost, abre la pantalla del host usando esa IP: `http://192.168.1.50:3000/host.html`.
 3. Al crear la sala, **el servidor autodetectará la IP y generará un QR configurado automáticamente con la dirección correcta** para que cualquier dispositivo conectado al mismo Wi-Fi pueda entrar de inmediato con solo escanear la pantalla.
-4. El app se encuentra disponible como anfitrión en: [https://danieldevq.onrender.com/host.html](https://danieldevq.onrender.com/host.html)
-5. Para los jugadores en: [https://danieldevq.onrender.com](https://danieldevq.onrender.com)
+4. El app se encuentra disponible como anfitrión en: [https://danhoot.onrender.com/host.html](https://danhoot.onrender.com/host.html)
+5. Para los jugadores en: [https://danhoot.onrender.com](https://danhoot.onrender.com)
