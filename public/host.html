@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DanielDevQ - Panel del Anfitrión</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <!-- Header Bar -->
   <header class="header-bar">
-    <a href="https://github.com/DanielDev87" target="_blank" style="color: inherit; text-decoration: none;" class="header-logo">DanielDev<span>Q</span></a>
+    <a href="https://github.com/DanielDev87" target="_blank" style="color: inherit; text-decoration: none;"
+      class="header-logo">DanielDev<span>Q</span></a>
     <div id="room-pin-header" class="room-pin-display hidden">PIN: <span id="header-pin">000000</span></div>
   </header>
 
   <main class="container">
-    
+
     <!-- SECTION 1: QUIZ CREATOR -->
     <section id="creator-section" class="glass-card" style="max-width: 800px;">
       <h1 class="logo-text">Crear nuevo <span class="logo-accent">DanielDevQ</span></h1>
@@ -26,18 +29,21 @@
           <input type="text" id="quiz-title" placeholder="Ej. Trivia de Cultura General" required autocomplete="off">
         </div>
 
-        <h3 style="text-align: left; margin-top: 2rem; margin-bottom: 1rem; color: var(--color-white); font-size: 1.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;">Preguntas (Mínimo 3)</h3>
-        
+        <h3
+          style="text-align: left; margin-top: 2rem; margin-bottom: 1rem; color: var(--color-white); font-size: 1.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;">
+          Preguntas (Mínimo 3)</h3>
+
         <div id="questions-list-container">
           <!-- Dynamic Question Cards go here -->
         </div>
 
         <button type="button" id="add-question-btn" class="btn btn-secondary mb-4" style="margin-top: 1rem;">
-          ➕ Añadir Nueva Pregunta
+          Añadir Nueva Pregunta
         </button>
 
-        <button type="submit" class="btn btn-primary" style="font-size: 1.15rem; padding: 1.1rem 2rem; margin-top: 1.5rem;">
-          🚀 Crear Sala y Generar PIN
+        <button type="submit" class="btn btn-primary"
+          style="font-size: 1.15rem; padding: 1.1rem 2rem; margin-top: 1.5rem;">
+          Crear Sala y Generar PIN
         </button>
       </form>
     </section>
@@ -48,29 +54,33 @@
       <div class="glass-card" style="max-width: 100%; width: 100%;">
         <h2>Lobby de Espera</h2>
         <p class="subtitle" id="lobby-quiz-title">Preparando juego...</p>
-        
+
         <div class="lobby-grid">
           <!-- QR / PIN Display -->
           <div class="qr-section">
-            <h3 style="font-size: 1.1rem; color: var(--color-gray-medium); text-transform: uppercase; margin-bottom: 1rem;">Escanea el QR para unirte:</h3>
+            <h3
+              style="font-size: 1.1rem; color: var(--color-gray-medium); text-transform: uppercase; margin-bottom: 1rem;">
+              Escanea el QR para unirte:</h3>
             <img id="qr-display" class="qr-code-img" src="" alt="QR de sala">
-            <h3 style="font-size: 1.1rem; color: var(--color-gray-medium); text-transform: uppercase;">O ingresa el PIN:</h3>
+            <h3 style="font-size: 1.1rem; color: var(--color-gray-medium); text-transform: uppercase;">O ingresa el PIN:
+            </h3>
             <div id="lobby-pin-display" class="pin-huge">000000</div>
           </div>
-          
+
           <!-- Players List -->
           <div class="players-section">
             <div class="players-header">
               <h3 style="margin-bottom: 0; font-size: 1.2rem; color: var(--color-white);">Jugadores Conectados</h3>
               <span id="player-count-badge" class="players-count">0</span>
             </div>
-            
+
             <div id="lobby-players-list" class="players-list">
               <!-- Dynamically populated player list -->
             </div>
-            
+
             <div style="margin-top: auto; padding-top: 2rem;">
-              <button id="start-game-btn" class="btn btn-primary btn-disabled" disabled style="font-size: 1.2rem; padding: 1.1rem 2rem;">
+              <button id="start-game-btn" class="btn btn-primary btn-disabled" disabled
+                style="font-size: 1.2rem; padding: 1.1rem 2rem;">
                 Esperando Jugadores...
               </button>
             </div>
@@ -83,11 +93,13 @@
     <!-- SECTION 3: GAME / ACTIVE QUESTION -->
     <section id="game-section" class="hidden" style="width: 100%; max-width: 1000px; margin: 0 auto;">
       <div class="glass-card" style="max-width: 100%; padding: 2.5rem 2rem;">
-        
+
         <div class="game-header">
-          <div class="status-pill">Pregunta <span id="current-q-index">1</span> de <span id="total-q-count">3</span></div>
+          <div class="status-pill">Pregunta <span id="current-q-index">1</span> de <span id="total-q-count">3</span>
+          </div>
           <div id="game-countdown-number" class="time-counter">20</div>
-          <div class="status-pill">Respuestas: <span id="answered-count">0</span> / <span id="lobby-total-players">0</span></div>
+          <div class="status-pill">Respuestas: <span id="answered-count">0</span> / <span
+              id="lobby-total-players">0</span></div>
         </div>
 
         <h2 id="display-question-text" class="question-text-huge">Cargando pregunta...</h2>
@@ -104,7 +116,8 @@
 
         <!-- Live Rankings (visible during countdown) -->
         <div id="live-ranking-container" class="glass-card hidden" style="margin-top: 1.5rem; padding: 1rem;">
-          <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--color-gray-medium);">Carrera en Vivo (Posiciones Parciales)</h4>
+          <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--color-gray-medium);">Carrera en Vivo
+            (Posiciones Parciales)</h4>
           <div id="live-ranking-list" style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem;">
           </div>
         </div>
@@ -112,7 +125,8 @@
         <!-- SECTION 3B: STATS & CHARTS PANEL (Visible after question timeout) -->
         <div id="stats-panel" class="stats-grid hidden">
           <div class="chart-card">
-            <h3 style="font-size: 1.1rem; text-align: left; margin-bottom: 1rem; color: var(--color-white);">Distribución de Respuestas</h3>
+            <h3 style="font-size: 1.1rem; text-align: left; margin-bottom: 1rem; color: var(--color-white);">
+              Distribución de Respuestas</h3>
             <div class="bar-chart">
               <div class="bar-wrapper">
                 <div id="bar-0" class="chart-bar btn-red" style="height: 10%;"><span class="bar-value">0</span></div>
@@ -132,13 +146,14 @@
               </div>
             </div>
           </div>
-          
+
           <div class="chart-card" style="justify-content: flex-start;">
-            <h3 style="font-size: 1.1rem; text-align: left; margin-bottom: 1rem; color: var(--color-white);">Tabla de Posiciones</h3>
+            <h3 style="font-size: 1.1rem; text-align: left; margin-bottom: 1rem; color: var(--color-white);">Tabla de
+              Posiciones</h3>
             <ul id="mid-leaderboard-list" style="list-style: none; padding: 0;">
               <!-- Dynamically populated top 5 ranking -->
             </ul>
-            
+
             <div style="margin-top: auto; padding-top: 1rem;">
               <button id="next-question-btn" class="btn btn-primary">
                 Siguiente Pregunta ➡️
@@ -167,16 +182,17 @@
             </div>
             <div class="podium-pedestal step-2">2</div>
           </div>
-          
+
           <!-- 1st Place -->
           <div class="podium-step" id="podium-first" style="opacity: 0;">
             <div class="podium-player-card">
-              <div class="podium-player-name" id="first-name" style="font-weight: 900; font-size: 1.25rem;">Jugador 1</div>
+              <div class="podium-player-name" id="first-name" style="font-weight: 900; font-size: 1.25rem;">Jugador 1
+              </div>
               <div class="podium-player-score" id="first-score" style="font-size: 1rem;">0 pts</div>
             </div>
             <div class="podium-pedestal step-1">1</div>
           </div>
-          
+
           <!-- 3rd Place -->
           <div class="podium-step" id="podium-third" style="opacity: 0;">
             <div class="podium-player-card">
@@ -258,7 +274,7 @@
       const card = document.createElement('div');
       card.className = 'question-item';
       card.dataset.index = qIndex;
-      
+
       const pText = preloadData ? preloadData.text : '';
       const pTime = preloadData ? preloadData.timeLimit : 20;
 
@@ -295,24 +311,24 @@
         </div>
       `;
       questionsListContainer.appendChild(card);
-      
+
       // Initialize default quiz UI
       window.updateQuestionTypeUI(card.querySelector('.q-type'), qIndex, preloadData);
       reindexQuestions();
     }
 
     // Function to update the specific UI based on selected type
-    window.updateQuestionTypeUI = function(selectElement, qIndex, preloadData = null) {
+    window.updateQuestionTypeUI = function (selectElement, qIndex, preloadData = null) {
       const type = selectElement.value;
       const container = document.getElementById(`options-container-${qIndex}`);
-      
+
       if (type === 'quiz') {
         const pOpt0 = preloadData && preloadData.options ? preloadData.options[0] : '';
         const pOpt1 = preloadData && preloadData.options ? preloadData.options[1] : '';
         const pOpt2 = preloadData && preloadData.options ? preloadData.options[2] : '';
         const pOpt3 = preloadData && preloadData.options ? preloadData.options[3] : '';
         const pCorrect = preloadData && preloadData.correct !== undefined ? preloadData.correct : 0;
-        
+
         container.innerHTML = `
           <label>Opciones de Respuesta y Selección de la Correcta</label>
           <div class="options-creator-grid">
@@ -386,7 +402,7 @@
     };
 
     // Remove card and adjust names
-    window.removeQuestionCard = function(button) {
+    window.removeQuestionCard = function (button) {
       const card = button.closest('.question-item');
       card.remove();
       reindexQuestions();
@@ -397,11 +413,11 @@
       cards.forEach((card, index) => {
         const qNum = index + 1;
         card.dataset.index = qNum;
-        
+
         // Update labels
         const badge = card.querySelector('.question-item-header span');
         badge.textContent = `Pregunta #${qNum}`;
-        
+
         // Update correct radio buttons names group
         const radios = card.querySelectorAll('input[type="radio"]');
         radios.forEach(radio => {
@@ -417,7 +433,7 @@
     // Form submission creates lobby
     creatorForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      
+
       const cards = questionsListContainer.querySelectorAll('.question-item');
       if (cards.length < 3) {
         alert("Por favor añade al menos 3 preguntas en total.");
@@ -439,7 +455,7 @@
           ];
           const correctIndex = parseInt(card.querySelector(`input[name="correct-${card.dataset.index}"]:checked`).value);
           questionsData.push({ type, text, options, correct: correctIndex, timeLimit });
-        
+
         } else if (type === 'ordering') {
           // Shuffle the options to show to the user, but keep the original order as correct
           const original = [
@@ -451,7 +467,7 @@
           // We send the options in random order to the client, but store the exact correct sequence
           const options = [...original].sort(() => Math.random() - 0.5);
           questionsData.push({ type, text, options, correct: original, timeLimit });
-        
+
         } else if (type === 'matching') {
           // Send pairs. Left array will be fixed, Right array will be shuffled on the client side
           const left = [
@@ -466,9 +482,9 @@
             card.querySelector('.q-match-r2').value.trim(),
             card.querySelector('.q-match-r3').value.trim()
           ];
-          
+
           // The correct answer is an array of pairs of indices matching left to right
-          const correct = [[0,0], [1,1], [2,2], [3,3]]; // Since they input them in correct pairs
+          const correct = [[0, 0], [1, 1], [2, 2], [3, 3]]; // Since they input them in correct pairs
           questionsData.push({ type, text, options: { left, right }, correct, timeLimit });
         }
       });
@@ -482,11 +498,11 @@
     // Game Room created successfully
     socket.on('gameCreated', (data) => {
       roomCode = data.roomCode;
-      
+
       // Update global headers
       document.getElementById('header-pin').textContent = roomCode;
       document.getElementById('room-pin-header').classList.remove('hidden');
-      
+
       // Update Lobby visuals
       document.getElementById('lobby-quiz-title').textContent = document.getElementById('quiz-title').value.trim();
       document.getElementById('qr-display').src = data.qrCodeDataUrl;
@@ -502,7 +518,7 @@
       const playerListElement = document.getElementById('lobby-players-list');
       const startBtn = document.getElementById('start-game-btn');
       const countBadge = document.getElementById('player-count-badge');
-      
+
       playerListElement.innerHTML = '';
       totalPlayersCount = data.players.length;
       countBadge.textContent = totalPlayersCount;
@@ -544,13 +560,13 @@
     socket.on('sendQuestion', (data) => {
       // Hide statistics dashboard
       document.getElementById('stats-panel').classList.add('hidden');
-      
+
       // Update Index details
       document.getElementById('current-q-index').textContent = data.questionIndex + 1;
       document.getElementById('total-q-count').textContent = data.totalQuestions;
       document.getElementById('lobby-total-players').textContent = totalPlayersCount;
       document.getElementById('answered-count').textContent = '0';
-      
+
       // Set Question Text
       document.getElementById('display-question-text').textContent = data.questionText;
 
@@ -572,13 +588,13 @@
       let timerVal = data.timeLimit;
       const timerNumElement = document.getElementById('game-countdown-number');
       const progressBar = document.getElementById('timer-progress-bar');
-      
+
       timerNumElement.textContent = timerVal;
       timerNumElement.style.borderColor = 'var(--color-red-light)';
       progressBar.style.width = '100%';
 
       if (clientTimerInterval) clearInterval(clientTimerInterval);
-      
+
       const startTime = Date.now();
       const durationMs = data.timeLimit * 1000;
 
@@ -590,7 +606,7 @@
 
         timerNumElement.textContent = remainingSec;
         progressBar.style.width = `${(remaining / durationMs) * 100}%`;
-        
+
         // Play tick sound on the last 5 seconds
         if (remainingSec <= 5 && remainingSec < lastTickSec && remainingSec > 0) {
           if (window.SoundFX) SoundFX.playTick();
@@ -611,11 +627,11 @@
     socket.on('liveRankings', (data) => {
       const liveList = document.getElementById('live-ranking-list');
       const liveContainer = document.getElementById('live-ranking-container');
-      
+
       if (data.leaderboard.length > 0) {
         liveContainer.classList.remove('hidden');
       }
-      
+
       liveList.innerHTML = '';
       data.leaderboard.forEach((p, idx) => {
         const item = document.createElement('div');
@@ -634,9 +650,9 @@
         clearInterval(clientTimerInterval);
         clientTimerInterval = null;
       }
-      
+
       if (window.SoundFX) SoundFX.playChime();
-      
+
       // Hide live ranking
       document.getElementById('live-ranking-container').classList.add('hidden');
 
@@ -647,7 +663,7 @@
       // Highlight the correct answer button in choices grid, dim incorrect options
       const optionsGrid = document.getElementById('options-display-grid');
       const optionButtons = optionsGrid.querySelectorAll('.option-btn');
-      
+
       optionButtons.forEach((btn, idx) => {
         if (idx === data.correctOptionIndex) {
           btn.style.transform = 'scale(1.03)';
@@ -670,7 +686,7 @@
       for (let i = 0; i < 4; i++) {
         const count = dist[i] || 0;
         const pct = totalAnswers > 0 ? (count / totalAnswers) * 100 : 0;
-        
+
         const barElement = document.getElementById(`bar-${i}`);
         barElement.style.height = `${Math.max(10, pct)}%`; // Minimum height to render
         barElement.querySelector('.bar-value').textContent = `${count} (${Math.round(pct)}%)`;
@@ -679,14 +695,14 @@
       // Populate mid-game leaderboard list
       const midList = document.getElementById('mid-leaderboard-list');
       midList.innerHTML = '';
-      
+
       data.leaderboard.forEach((p, idx) => {
         const item = document.createElement('li');
         item.className = 'leaderboard-item';
         item.style.padding = '0.65rem 1rem';
         item.style.fontSize = '0.95rem';
-        
-        const rankColorClass = idx < 3 ? `rank-badge-${idx+1}` : '';
+
+        const rankColorClass = idx < 3 ? `rank-badge-${idx + 1}` : '';
         item.innerHTML = `
           <div class="leaderboard-rank-name">
             <span class="rank-badge ${rankColorClass}">${idx + 1}</span>
@@ -711,16 +727,16 @@
 
       // Populate Top 3 Podium
       const podium = data.podium;
-      
+
       const firstEl = document.getElementById('podium-first');
       const secondEl = document.getElementById('podium-second');
       const thirdEl = document.getElementById('podium-third');
-      
+
       // Reset visibility classes
       firstEl.className = 'podium-step';
       secondEl.className = 'podium-step';
       thirdEl.className = 'podium-step';
-      
+
       firstEl.style.opacity = '0';
       secondEl.style.opacity = '0';
       thirdEl.style.opacity = '0';
@@ -730,7 +746,7 @@
         document.getElementById('first-name').textContent = podium[0].nickname;
         document.getElementById('first-score').textContent = `${formatNumber(podium[0].score)} pts`;
       }
-      
+
       // Second place card
       if (podium[1]) {
         document.getElementById('second-name').textContent = podium[1].nickname;
@@ -746,12 +762,12 @@
       // Full leaderboard list population
       const finalList = document.getElementById('final-leaderboard-list');
       finalList.innerHTML = '';
-      
+
       data.fullLeaderboard.forEach((p, idx) => {
         const item = document.createElement('li');
         item.className = 'leaderboard-item';
-        
-        const rankColorClass = idx < 3 ? `rank-badge-${idx+1}` : '';
+
+        const rankColorClass = idx < 3 ? `rank-badge-${idx + 1}` : '';
         item.innerHTML = `
           <div class="leaderboard-rank-name">
             <span class="rank-badge ${rankColorClass}">${idx + 1}</span>
@@ -764,21 +780,21 @@
 
       // MYSTERY REVEAL SEQUENCE
       if (window.SoundFX) window.SoundFX.playDrumroll();
-      
+
       setTimeout(() => {
         if (podium[2]) {
           thirdEl.style.opacity = ''; // let class handle it
           thirdEl.classList.add('revealed');
         }
       }, 1000);
-      
+
       setTimeout(() => {
         if (podium[1]) {
           secondEl.style.opacity = '';
           secondEl.classList.add('revealed');
         }
       }, 2500);
-      
+
       setTimeout(() => {
         if (podium[0]) {
           if (window.SoundFX) window.SoundFX.playFanfare();
@@ -817,4 +833,5 @@
     });
   </script>
 </body>
+
 </html>
