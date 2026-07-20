@@ -779,7 +779,20 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:foc
   align-items: center;
   width: 30%;
   position: relative;
-  transition: all 0.5s ease;
+  transition: all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+  transform: translateY(160px) scale(0.7);
+}
+
+.podium-step.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.podium-step.revealed-first {
+  opacity: 1;
+  transform: translateY(-15px) scale(1.05);
+  filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6));
 }
 
 .podium-pedestal {
@@ -925,4 +938,25 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:foc
 @keyframes pulse {
   0% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
   100% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.5); }
+}
+
+/* Confetti Particle Styling */
+.confetti-particle {
+  position: absolute;
+  top: -20px;
+  z-index: 100;
+  border-radius: 4px;
+  pointer-events: none;
+  animation: fall-confetti linear forwards;
+}
+
+@keyframes fall-confetti {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(600px) rotate(720deg);
+    opacity: 0;
+  }
 }

@@ -102,6 +102,13 @@
           <!-- Dynamically populated option cards -->
         </div>
 
+        <!-- Live Rankings (visible during countdown) -->
+        <div id="live-ranking-container" class="glass-card hidden" style="margin-top: 1.5rem; padding: 1rem;">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--color-gray-medium);">Carrera en Vivo (Posiciones Parciales)</h4>
+          <div id="live-ranking-list" style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem;">
+          </div>
+        </div>
+
         <!-- SECTION 3B: STATS & CHARTS PANEL (Visible after question timeout) -->
         <div id="stats-panel" class="stats-grid hidden">
           <div class="chart-card">
@@ -253,11 +260,6 @@
       card.dataset.index = qIndex;
       
       const pText = preloadData ? preloadData.text : '';
-      const pOpt0 = preloadData ? preloadData.options[0] : '';
-      const pOpt1 = preloadData ? preloadData.options[1] : '';
-      const pOpt2 = preloadData ? preloadData.options[2] : '';
-      const pOpt3 = preloadData ? preloadData.options[3] : '';
-      const pCorrect = preloadData ? preloadData.correct : 0;
       const pTime = preloadData ? preloadData.timeLimit : 20;
 
       card.innerHTML = `
@@ -267,32 +269,21 @@
         </div>
         
         <div class="form-group">
+          <label>Tipo de Pregunta</label>
+          <select class="q-type" onchange="window.updateQuestionTypeUI(this, ${qIndex})">
+            <option value="quiz">Quiz (Selección Única)</option>
+            <option value="ordering">Ordenamiento</option>
+            <option value="matching">Apareamiento</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label>Pregunta</label>
           <input type="text" class="q-text" placeholder="Escribe el enunciado de la pregunta" value="${pText}" required autocomplete="off">
         </div>
 
-        <label>Opciones de Respuesta y Selección de la Correcta</label>
-        <div class="options-creator-grid">
-          <div class="option-input-wrapper">
-            <span class="option-badge opt-a">A</span>
-            <input type="text" class="q-opt-0" placeholder="Opción A (Rojo)" value="${pOpt0}" required autocomplete="off">
-            <input type="radio" name="correct-${qIndex}" value="0" ${pCorrect === 0 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
-          </div>
-          <div class="option-input-wrapper">
-            <span class="option-badge opt-b">B</span>
-            <input type="text" class="q-opt-1" placeholder="Opción B (Azul)" value="${pOpt1}" required autocomplete="off">
-            <input type="radio" name="correct-${qIndex}" value="1" ${pCorrect === 1 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
-          </div>
-          <div class="option-input-wrapper">
-            <span class="option-badge opt-c">C</span>
-            <input type="text" class="q-opt-2" placeholder="Opción C (Azul Oscuro)" value="${pOpt2}" required autocomplete="off">
-            <input type="radio" name="correct-${qIndex}" value="2" ${pCorrect === 2 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
-          </div>
-          <div class="option-input-wrapper">
-            <span class="option-badge opt-d">D</span>
-            <input type="text" class="q-opt-3" placeholder="Opción D (Blanco/Gris)" value="${pOpt3}" required autocomplete="off">
-            <input type="radio" name="correct-${qIndex}" value="3" ${pCorrect === 3 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
-          </div>
+        <div class="options-container" id="options-container-${qIndex}">
+          <!-- Options will be injected here by updateQuestionTypeUI -->
         </div>
 
         <div class="time-limit-wrapper">
@@ -304,8 +295,95 @@
         </div>
       `;
       questionsListContainer.appendChild(card);
+      
+      // Initialize default quiz UI
+      window.updateQuestionTypeUI(card.querySelector('.q-type'), qIndex, preloadData);
       reindexQuestions();
     }
+
+    // Function to update the specific UI based on selected type
+    window.updateQuestionTypeUI = function(selectElement, qIndex, preloadData = null) {
+      const type = selectElement.value;
+      const container = document.getElementById(`options-container-${qIndex}`);
+      
+      if (type === 'quiz') {
+        const pOpt0 = preloadData && preloadData.options ? preloadData.options[0] : '';
+        const pOpt1 = preloadData && preloadData.options ? preloadData.options[1] : '';
+        const pOpt2 = preloadData && preloadData.options ? preloadData.options[2] : '';
+        const pOpt3 = preloadData && preloadData.options ? preloadData.options[3] : '';
+        const pCorrect = preloadData && preloadData.correct !== undefined ? preloadData.correct : 0;
+        
+        container.innerHTML = `
+          <label>Opciones de Respuesta y Selección de la Correcta</label>
+          <div class="options-creator-grid">
+            <div class="option-input-wrapper">
+              <span class="option-badge opt-a">A</span>
+              <input type="text" class="q-opt-0" placeholder="Opción A (Rojo)" value="${pOpt0}" required autocomplete="off">
+              <input type="radio" name="correct-${qIndex}" value="0" ${pCorrect === 0 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
+            </div>
+            <div class="option-input-wrapper">
+              <span class="option-badge opt-b">B</span>
+              <input type="text" class="q-opt-1" placeholder="Opción B (Azul)" value="${pOpt1}" required autocomplete="off">
+              <input type="radio" name="correct-${qIndex}" value="1" ${pCorrect === 1 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
+            </div>
+            <div class="option-input-wrapper">
+              <span class="option-badge opt-c">C</span>
+              <input type="text" class="q-opt-2" placeholder="Opción C (Azul Oscuro)" value="${pOpt2}" required autocomplete="off">
+              <input type="radio" name="correct-${qIndex}" value="2" ${pCorrect === 2 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
+            </div>
+            <div class="option-input-wrapper">
+              <span class="option-badge opt-d">D</span>
+              <input type="text" class="q-opt-3" placeholder="Opción D (Blanco/Gris)" value="${pOpt3}" required autocomplete="off">
+              <input type="radio" name="correct-${qIndex}" value="3" ${pCorrect === 3 ? 'checked' : ''} style="margin-left: 10px; transform: scale(1.25); cursor: pointer;" title="Marcar como correcta">
+            </div>
+          </div>
+        `;
+      } else if (type === 'ordering') {
+        container.innerHTML = `
+          <label>Escribe los 4 elementos en el ORDEN CORRECTO</label>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+            <div class="option-input-wrapper" style="width: 100%;">
+              <span class="option-badge" style="background: var(--color-success); color: white;">1</span>
+              <input type="text" class="q-ord-0" placeholder="Primer elemento" required autocomplete="off" style="flex: 1;">
+            </div>
+            <div class="option-input-wrapper" style="width: 100%;">
+              <span class="option-badge" style="background: var(--color-success); color: white;">2</span>
+              <input type="text" class="q-ord-1" placeholder="Segundo elemento" required autocomplete="off" style="flex: 1;">
+            </div>
+            <div class="option-input-wrapper" style="width: 100%;">
+              <span class="option-badge" style="background: var(--color-success); color: white;">3</span>
+              <input type="text" class="q-ord-2" placeholder="Tercer elemento" required autocomplete="off" style="flex: 1;">
+            </div>
+            <div class="option-input-wrapper" style="width: 100%;">
+              <span class="option-badge" style="background: var(--color-success); color: white;">4</span>
+              <input type="text" class="q-ord-3" placeholder="Cuarto elemento" required autocomplete="off" style="flex: 1;">
+            </div>
+          </div>
+        `;
+      } else if (type === 'matching') {
+        container.innerHTML = `
+          <label>Escribe los 4 PARES CORRECTOS (Ej: Capital - País)</label>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+            <div style="display: flex; gap: 1rem;">
+              <input type="text" class="q-match-l0" placeholder="Izquierda 1" required style="flex:1;">
+              <input type="text" class="q-match-r0" placeholder="Derecha 1" required style="flex:1;">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+              <input type="text" class="q-match-l1" placeholder="Izquierda 2" required style="flex:1;">
+              <input type="text" class="q-match-r1" placeholder="Derecha 2" required style="flex:1;">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+              <input type="text" class="q-match-l2" placeholder="Izquierda 3" required style="flex:1;">
+              <input type="text" class="q-match-r2" placeholder="Derecha 3" required style="flex:1;">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+              <input type="text" class="q-match-l3" placeholder="Izquierda 4" required style="flex:1;">
+              <input type="text" class="q-match-r3" placeholder="Derecha 4" required style="flex:1;">
+            </div>
+          </div>
+        `;
+      }
+    };
 
     // Remove card and adjust names
     window.removeQuestionCard = function(button) {
@@ -348,19 +426,51 @@
 
       const questionsData = [];
       cards.forEach(card => {
+        const type = card.querySelector('.q-type').value;
         const text = card.querySelector('.q-text').value.trim();
-        const options = [
-          card.querySelector('.q-opt-0').value.trim(),
-          card.querySelector('.q-opt-1').value.trim(),
-          card.querySelector('.q-opt-2').value.trim(),
-          card.querySelector('.q-opt-3').value.trim()
-        ];
-        
-        // Find which radio is checked
-        const correctIndex = parseInt(card.querySelector(`input[name="correct-${card.dataset.index}"]:checked`).value);
         const timeLimit = parseInt(card.querySelector('.q-time-slider').value);
 
-        questionsData.push({ text, options, correct: correctIndex, timeLimit });
+        if (type === 'quiz') {
+          const options = [
+            card.querySelector('.q-opt-0').value.trim(),
+            card.querySelector('.q-opt-1').value.trim(),
+            card.querySelector('.q-opt-2').value.trim(),
+            card.querySelector('.q-opt-3').value.trim()
+          ];
+          const correctIndex = parseInt(card.querySelector(`input[name="correct-${card.dataset.index}"]:checked`).value);
+          questionsData.push({ type, text, options, correct: correctIndex, timeLimit });
+        
+        } else if (type === 'ordering') {
+          // Shuffle the options to show to the user, but keep the original order as correct
+          const original = [
+            card.querySelector('.q-ord-0').value.trim(),
+            card.querySelector('.q-ord-1').value.trim(),
+            card.querySelector('.q-ord-2').value.trim(),
+            card.querySelector('.q-ord-3').value.trim()
+          ];
+          // We send the options in random order to the client, but store the exact correct sequence
+          const options = [...original].sort(() => Math.random() - 0.5);
+          questionsData.push({ type, text, options, correct: original, timeLimit });
+        
+        } else if (type === 'matching') {
+          // Send pairs. Left array will be fixed, Right array will be shuffled on the client side
+          const left = [
+            card.querySelector('.q-match-l0').value.trim(),
+            card.querySelector('.q-match-l1').value.trim(),
+            card.querySelector('.q-match-l2').value.trim(),
+            card.querySelector('.q-match-l3').value.trim()
+          ];
+          const right = [
+            card.querySelector('.q-match-r0').value.trim(),
+            card.querySelector('.q-match-r1').value.trim(),
+            card.querySelector('.q-match-r2').value.trim(),
+            card.querySelector('.q-match-r3').value.trim()
+          ];
+          
+          // The correct answer is an array of pairs of indices matching left to right
+          const correct = [[0,0], [1,1], [2,2], [3,3]]; // Since they input them in correct pairs
+          questionsData.push({ type, text, options: { left, right }, correct, timeLimit });
+        }
       });
 
       const title = document.getElementById('quiz-title').value.trim();
@@ -427,6 +537,7 @@
     socket.on('gameStarted', () => {
       lobbySection.classList.add('hidden');
       gameSection.classList.remove('hidden');
+      if (window.SoundFX) SoundFX.playStart();
     });
 
     // Listen to new question events
@@ -471,6 +582,7 @@
       const startTime = Date.now();
       const durationMs = data.timeLimit * 1000;
 
+      let lastTickSec = timerVal;
       clientTimerInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const remaining = Math.max(0, durationMs - elapsed);
@@ -478,6 +590,12 @@
 
         timerNumElement.textContent = remainingSec;
         progressBar.style.width = `${(remaining / durationMs) * 100}%`;
+        
+        // Play tick sound on the last 5 seconds
+        if (remainingSec <= 5 && remainingSec < lastTickSec && remainingSec > 0) {
+          if (window.SoundFX) SoundFX.playTick();
+          lastTickSec = remainingSec;
+        }
 
         if (remaining <= 0) {
           clearInterval(clientTimerInterval);
@@ -490,12 +608,37 @@
       document.getElementById('answered-count').textContent = data.answeredCount;
     });
 
+    socket.on('liveRankings', (data) => {
+      const liveList = document.getElementById('live-ranking-list');
+      const liveContainer = document.getElementById('live-ranking-container');
+      
+      if (data.leaderboard.length > 0) {
+        liveContainer.classList.remove('hidden');
+      }
+      
+      liveList.innerHTML = '';
+      data.leaderboard.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.style.background = 'rgba(255,255,255,0.05)';
+        item.style.padding = '0.5rem 1rem';
+        item.style.borderRadius = '12px';
+        item.style.whiteSpace = 'nowrap';
+        item.innerHTML = `<span style="font-weight: 800; color: var(--color-blue-light);">#${idx + 1}</span> ${p.nickname} <span style="font-size: 0.85rem; color: var(--color-gray-medium);">(${formatNumber(p.score)})</span>`;
+        liveList.appendChild(item);
+      });
+    });
+
     // Receive Statistics and close questioning
     socket.on('questionResults', (data) => {
       if (clientTimerInterval) {
         clearInterval(clientTimerInterval);
         clientTimerInterval = null;
       }
+      
+      if (window.SoundFX) SoundFX.playChime();
+      
+      // Hide live ranking
+      document.getElementById('live-ranking-container').classList.add('hidden');
 
       // Hide timer values
       document.getElementById('game-countdown-number').textContent = '0';
@@ -569,30 +712,35 @@
       // Populate Top 3 Podium
       const podium = data.podium;
       
+      const firstEl = document.getElementById('podium-first');
+      const secondEl = document.getElementById('podium-second');
+      const thirdEl = document.getElementById('podium-third');
+      
+      // Reset visibility classes
+      firstEl.className = 'podium-step';
+      secondEl.className = 'podium-step';
+      thirdEl.className = 'podium-step';
+      
+      firstEl.style.opacity = '0';
+      secondEl.style.opacity = '0';
+      thirdEl.style.opacity = '0';
+
       // First place card
       if (podium[0]) {
         document.getElementById('first-name').textContent = podium[0].nickname;
         document.getElementById('first-score').textContent = `${formatNumber(podium[0].score)} pts`;
-        document.getElementById('podium-first').style.opacity = '1';
-        document.getElementById('podium-first').style.transform = 'translateY(-10px)';
       }
       
       // Second place card
       if (podium[1]) {
         document.getElementById('second-name').textContent = podium[1].nickname;
         document.getElementById('second-score').textContent = `${formatNumber(podium[1].score)} pts`;
-        document.getElementById('podium-second').style.opacity = '1';
-      } else {
-        document.getElementById('podium-second').style.opacity = '0';
       }
 
       // Third place card
       if (podium[2]) {
         document.getElementById('third-name').textContent = podium[2].nickname;
         document.getElementById('third-score').textContent = `${formatNumber(podium[2].score)} pts`;
-        document.getElementById('podium-third').style.opacity = '1';
-      } else {
-        document.getElementById('podium-third').style.opacity = '0';
       }
 
       // Full leaderboard list population
@@ -613,6 +761,31 @@
         `;
         finalList.appendChild(item);
       });
+
+      // MYSTERY REVEAL SEQUENCE
+      if (window.SoundFX) window.SoundFX.playDrumroll();
+      
+      setTimeout(() => {
+        if (podium[2]) {
+          thirdEl.style.opacity = ''; // let class handle it
+          thirdEl.classList.add('revealed');
+        }
+      }, 1000);
+      
+      setTimeout(() => {
+        if (podium[1]) {
+          secondEl.style.opacity = '';
+          secondEl.classList.add('revealed');
+        }
+      }, 2500);
+      
+      setTimeout(() => {
+        if (podium[0]) {
+          if (window.SoundFX) window.SoundFX.playFanfare();
+          firstEl.style.opacity = '';
+          firstEl.classList.add('revealed-first');
+        }
+      }, 4000);
     });
 
     // Play again event triggers reset

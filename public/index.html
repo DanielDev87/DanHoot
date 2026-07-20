@@ -254,18 +254,125 @@
 
       const optionColors = ['btn-red', 'btn-blue', 'btn-navy', 'btn-white'];
 
-      data.options.forEach((optText, index) => {
-        const button = document.createElement('button');
-        button.className = `option-btn ${optionColors[index]}`;
-        button.innerHTML = `${OptionIcons[index]} <span>${optText}</span>`;
+      if (!data.type || data.type === 'quiz') {
+        data.options.forEach((optText, index) => {
+          const button = document.createElement('button');
+          button.className = `option-btn ${optionColors[index]}`;
+          button.innerHTML = `${OptionIcons[index]} <span>${optText}</span>`;
+          button.addEventListener('click', () => {
+            submitMyChoice(index);
+          });
+          keypad.appendChild(button);
+        });
+      } else if (data.type === 'ordering') {
+        let sequence = [];
+        data.options.forEach((optText, index) => {
+          const button = document.createElement('button');
+          button.className = `option-btn ${optionColors[index]}`;
+          button.innerHTML = `<span>${optText}</span>`;
+          button.addEventListener('click', () => {
+            if (button.disabled) return;
+            button.disabled = true;
+            button.style.opacity = '0.4';
+            sequence.push(optText); // Send the actual string value
+            
+            // Add a badge to show the order it was clicked
+            const badge = document.createElement('div');
+            badge.textContent = sequence.length;
+            badge.style.position = 'absolute';
+            badge.style.top = '10px';
+            badge.style.right = '10px';
+            badge.style.background = 'var(--color-white)';
+            badge.style.color = 'var(--bg-dark-deep)';
+            badge.style.borderRadius = '50%';
+            badge.style.width = '24px';
+            badge.style.height = '24px';
+            badge.style.display = 'flex';
+            badge.style.alignItems = 'center';
+            badge.style.justifyContent = 'center';
+            badge.style.fontWeight = 'bold';
+            button.appendChild(badge);
+
+            if (sequence.length === data.options.length) {
+              submitMyChoice(sequence);
+            }
+          });
+          keypad.appendChild(button);
+        });
+      } else if (data.type === 'matching') {
+        // Change layout
+        keypad.style.gridTemplateColumns = '1fr 1fr';
         
-        // Form click event emitter
-        button.addEventListener('click', () => {
-          submitMyChoice(index);
+        let leftSelected = null;
+        let rightSelected = null;
+        let pairs = [];
+        
+        const rightShuffled = data.options.right.map((val, idx) => ({val, idx})).sort(() => Math.random() - 0.5);
+        
+        const leftCol = document.createElement('div');
+        leftCol.style.display = 'flex'; leftCol.style.flexDirection = 'column'; leftCol.style.gap = '1rem';
+        
+        const rightCol = document.createElement('div');
+        rightCol.style.display = 'flex'; rightCol.style.flexDirection = 'column'; rightCol.style.gap = '1rem';
+
+        const leftBtns = [];
+        const rightBtns = [];
+
+        const checkPair = () => {
+          if (leftSelected !== null && rightSelected !== null) {
+            pairs.push([leftSelected.dataset.idx, rightSelected.dataset.idx]);
+            leftSelected.disabled = true; leftSelected.style.opacity = '0.2';
+            rightSelected.disabled = true; rightSelected.style.opacity = '0.2';
+            leftSelected = null;
+            rightSelected = null;
+            
+            if (pairs.length === 4) {
+              // Sort pairs by left index to match server expectation
+              pairs.sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+              // Format correctly as array of numbers arrays
+              const formattedPairs = pairs.map(p => [parseInt(p[0]), parseInt(p[1])]);
+              submitMyChoice(formattedPairs);
+            }
+          }
+        };
+
+        data.options.left.forEach((optText, index) => {
+          const button = document.createElement('button');
+          button.className = `option-btn btn-red`;
+          button.style.padding = '1rem';
+          button.dataset.idx = index;
+          button.innerHTML = `<span>${optText}</span>`;
+          button.addEventListener('click', () => {
+            if (button.disabled) return;
+            leftBtns.forEach(b => { if(!b.disabled) b.style.boxShadow = ''; });
+            button.style.boxShadow = '0 0 15px white';
+            leftSelected = button;
+            checkPair();
+          });
+          leftBtns.push(button);
+          leftCol.appendChild(button);
         });
 
-        keypad.appendChild(button);
-      });
+        rightShuffled.forEach((item, index) => {
+          const button = document.createElement('button');
+          button.className = `option-btn btn-blue`;
+          button.style.padding = '1rem';
+          button.dataset.idx = item.idx;
+          button.innerHTML = `<span>${item.val}</span>`;
+          button.addEventListener('click', () => {
+            if (button.disabled) return;
+            rightBtns.forEach(b => { if(!b.disabled) b.style.boxShadow = ''; });
+            button.style.boxShadow = '0 0 15px white';
+            rightSelected = button;
+            checkPair();
+          });
+          rightBtns.push(button);
+          rightCol.appendChild(button);
+        });
+
+        keypad.appendChild(leftCol);
+        keypad.appendChild(rightCol);
+      }
 
       // Synchronize timer calculations
       questionStartTime = Date.now();
@@ -350,11 +457,13 @@
         icon.textContent = '✅';
         title.textContent = '¡Correcto!';
         points.textContent = `+${formatNumber(data.pointsEarned)} pts`;
+        if (window.SoundFX) SoundFX.playCorrect();
       } else {
         feedbackOverlay.classList.add('feedback-incorrect');
         icon.textContent = '❌';
         title.textContent = '¡Incorrecto!';
         points.textContent = '+0 pts';
+        if (window.SoundFX) SoundFX.playIncorrect();
       }
 
       feedbackOverlay.classList.remove('hidden');

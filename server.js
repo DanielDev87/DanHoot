@@ -84,7 +84,12 @@ function endQuestion(roomCode) {
   // Send individualized feedback to each player
   Object.keys(game.players).forEach(socketId => {
     const player = game.players[socketId];
-    const isCorrect = (player.lastAnswer === question.correct);
+    let isCorrect = false;
+    if (question.type === 'quiz' || !question.type) {
+      isCorrect = (player.lastAnswer === question.correct);
+    } else {
+      isCorrect = (JSON.stringify(player.lastAnswer) === JSON.stringify(question.correct));
+    }
     
     io.to(socketId).emit('questionFeedback', {
       isCorrect,
@@ -124,9 +129,10 @@ io.on('connection', (socket) => {
         hostSocketId: socket.id,
         title,
         questions: questions.map(q => ({
+          type: q.type || 'quiz',
           text: q.text,
           options: q.options,
-          correct: parseInt(q.correct),
+          correct: (!q.type || q.type === 'quiz') ? parseInt(q.correct) : q.correct,
           timeLimit: parseInt(q.timeLimit) || 20
         })),
         currentQuestionIndex: -1,
@@ -238,6 +244,7 @@ io.on('connection', (socket) => {
     io.to(roomCode).emit('sendQuestion', {
       questionIndex: game.currentQuestionIndex,
       totalQuestions: game.questions.length,
+      type: question.type || 'quiz',
       questionText: question.text,
       options: question.options,
       timeLimit: question.timeLimit
@@ -263,17 +270,24 @@ io.on('connection', (socket) => {
     if (player.lastAnswer !== null) return;
 
     const currentQuestion = game.questions[game.currentQuestionIndex];
-    const optionIdx = parseInt(answerIndex);
+    let isCorrect = false;
 
-    player.lastAnswer = optionIdx;
-    
-    // Increment distribution stats
-    if (optionIdx >= 0 && optionIdx <= 3) {
-      game.responses[optionIdx] = (game.responses[optionIdx] || 0) + 1;
+    if (!currentQuestion.type || currentQuestion.type === 'quiz') {
+      const optionIdx = parseInt(answerIndex);
+      player.lastAnswer = optionIdx;
+      // Increment distribution stats
+      if (optionIdx >= 0 && optionIdx <= 3) {
+        game.responses[optionIdx] = (game.responses[optionIdx] || 0) + 1;
+      }
+      isCorrect = (optionIdx === currentQuestion.correct);
+    } else {
+      player.lastAnswer = answerIndex;
+      game.responses['submitted'] = (game.responses['submitted'] || 0) + 1;
+      isCorrect = (JSON.stringify(answerIndex) === JSON.stringify(currentQuestion.correct));
     }
 
     // Score calculations: base 1000, subtracting time elapsed
-    if (optionIdx === currentQuestion.correct) {
+    if (isCorrect) {
       const timeLimitMs = currentQuestion.timeLimit * 1000;
       
       // Calculate active elapsed time
@@ -295,6 +309,12 @@ io.on('connection', (socket) => {
     io.to(game.hostSocketId).emit('updateStats', {
       answeredCount: game.responsesReceived,
       totalPlayers: Object.keys(game.players).length
+    });
+
+    // Send live updated rankings
+    const liveLeaderboard = getLeaderboard(game);
+    io.to(game.hostSocketId).emit('liveRankings', {
+      leaderboard: liveLeaderboard.slice(0, 5)
     });
 
     // If all players responded, end the question countdown immediately
