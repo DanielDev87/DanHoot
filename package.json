@@ -1,7 +1,7 @@
 {
-  "name": "danhoot",
+  "name": "danieldevq",
   "version": "1.0.0",
-  "description": "DanHoot - Real-time Kahoot Clone",
+  "description": "DanielDevQ - Real-time Kahoot Clone",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

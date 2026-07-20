@@ -421,5 +421,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`DanHoot server running on http://localhost:${PORT}`);
+  console.log(`DanielDevQ server running on http://localhost:${PORT}`);
 });
